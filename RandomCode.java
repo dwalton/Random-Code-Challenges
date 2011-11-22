@@ -1,5 +1,6 @@
 import java.util.Random;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 /** RandomCode
  * This class generates different sections of random code
@@ -19,6 +20,8 @@ public class RandomCode
   private static final int FUNCTION_NAME_LENGTH = 7; 
   private static final int FUNCTION_MAX_ARGS = 5;
   private static final int VAR_NAME_LENGTH = 4;
+  private static final int MAX_BOOLEAN_EXPRESSIONS = 3;
+  private static final int FUNCTION_MAX_PARAMS = 4;
 
   /**
    * Generic constructor... may add one for specifying options above
@@ -30,50 +33,132 @@ public class RandomCode
   }
   
   /**
-   * Generate a random return statement given the type to return.
-   * @param type the type of statement to return (String, int, boolean...)
-   * @return 2x2 String array. Provide expression (0,0), expression (1,0), solve the expression (0,1), evaluation/solution (1,1).
+   * Generate a random return statement
+   * @return ChallengePair the object that contains two questions and two answers.  Sometimes the second question/answer can be null if irrelavent.
    */
-//   public String[][] generateReturn(Types type)
-//   {
-//     String q0 = "Give the statement that returns <exp>";
-//     String a0 = "return <exp>";
-//     
-//     String[][] exp = new String[2][2];
-//     switch(type)
-//     {
-//       case INT:
-//         exp = RandomArithmetic.getVal(true);
-//         break;
-//       case BOOLEAN:
-//         exp = RandomArithmetic.getVal(false);
-//         break;
-//       case DOUBLE:
-//       case CHAR:
-//       case STRING:
-//         exp[0][0] = type.randomSVal();
-//         exp[0][1] = exp[0][0];
-//         exp[1][0] = exp[0][0];
-//         exp[1][1] = exp[0][0]; 
-//         break;
-//       default:
-//         break;
-//     }
-//     
-//     q0 = q0.replaceFirst("<exp>", exp[0][0]);
-//     a0 = a0.replaceFirst("<exp>", exp[1][0]);
-//     
-//     String[][] answers = new String[2][2];
-//     
-//     answers[0][0] = q0;
-//     answers[1][0] = a0;
-//     
-//     return answers;
-//   }
+  public ChallengePair generateReturn()
+  {
+    EnglishAST q0 = new EnglishAST("Give the statement that ");
+    String a0;
+    EnglishAST q1 = null;
+    String a1 = "";
+    
+    ReturnFragment rf = new ReturnFragment();
+    ArrayList<Fragment> funcargs = new ArrayList<Fragment>();
+    ChallengePair exp = getExp();
+    
+    a0 = "return " + exp.first.answer;
+    
+//     int numfuncs = (((EnglishAST)exp.first.question).children).size()-1;
+    
+    if(exp.first.question instanceof EnglishAST)
+    {
+      funcargs.addAll(((EnglishAST)exp.first.question).children);
+      if(!funcargs.isEmpty())
+        rf.add(funcargs.remove(0));
+    }
+    else
+      rf.add(exp.first.question);
+
+    
+    
+    q0.add(rf);
+    q0.children.addAll(funcargs);
+
+    if(exp.first.question instanceof FunctionCallExpFragment)
+    {
+      //add args to q0 as new sentence
+      q0.add(exp.second.question);
+    }
+    
+    ChallengePair answers = new ChallengePair(q0,a0,q1,a1);
+    return answers;
+  }
+
+  /**
+   * Returns a random expression as a ChallengePair
+   * Expressions can be: values, complex boolean/math, simple boolean/math,
+   *   and function calls
+   */
+  public ChallengePair getExp()
+  {
+    /*
+    * An expression can be:
+    * value(inc function calls)
+    * complex boolean
+    * complex math
+    * simple math
+    * simple boolean
+    */
+    ChallengePair answers = new ChallengePair();
+    
+    int choice = random.nextInt(5);
+    switch(choice)
+    {
+      case 0: //value
+        int norb = random.nextInt(2);
+        if(norb == 0)
+          answers = ra.getVal(true);
+        else
+          answers = ra.getVal(false);
+        break;
+      case 1: //complex boolean
+        answers = generateComplexBoolean();
+        break;
+      case 2: //complex math
+        ChallengePair temp = ra.generateComplex();
+        answers = temp;   
+        break;
+      case 3: //simple boolean
+        if(random.nextInt(2) == 1)
+          answers = generateBooleanExpr(true);
+        else
+          answers = generateBooleanExpr(false);
+        break;
+      case 4: //simple math
+        temp = ra.generateMath(true);
+        answers = temp;
+        break;
+      default:
+        break;
+    }
+    
+    return answers;
+  }
+  
+  /**
+   * Returns a random statement as a ChallengePair
+   * Statements can be: returns, assignments, function calls,
+   *   (and later: if, while, switch, for, blocks...)
+   */
+  public ChallengePair getStatement()
+  {
+    ChallengePair ret = null;
+    int i = 0;
+    int choice = random.nextInt(3);
+    switch(choice)
+    {
+      case 0: //return
+        ret = generateReturn();
+        break;
+      case 1: //assignment
+        ret = generateAssignment();
+        break;
+      case 2: //function call
+        ret = generateFunctionCall();
+        break;
+      //more later...
+      default:
+        System.exit(1);
+        break;
+    }
+    
+    return ret;
+  }
 
   /**
    * Generate a random function call
-   * @return 2x2 String array. Provide expression (0,0), expression (1,0), solve the expression (0,1), evaluation/solution (1,1).
+   * @return ChallengePair the object that contains two questions and two answers.  Sometimes the second question/answer can be null if irrelavent.
    */
   public ChallengePair generateFunctionCall()
   {
@@ -83,7 +168,7 @@ public class RandomCode
     EnglishAST q0 = new EnglishAST("Provide");
     String a0;
     EnglishAST q1 = null;//new EnglishAST("");
-    String a1 = null;
+    String a1 = "";
     
     FunctionCallExpFragment func = new FunctionCallExpFragment(fname);
     
@@ -115,51 +200,13 @@ public class RandomCode
   }
 
   /**
-   * Helper function for generateFunctionCall, replaces function name, types,
+   * REMOVED - Helper function for generateFunctionCall, replaces function name, types,
    * and parameters.
    */
-//   public String replaceTags(String sentence, String[] tags, String[] want)
-//   {
-//     String s = sentence;
-//     String st = "";
-//     String temp = "";
-//     String[] types = null;
-//     for(int i = 0; i < tags.length; i++)
-//     {
-//       if(tags[i].equals("<fname>"))
-//         s = s.replaceAll("<fname>", want[i]);
-//       else if(tags[i].equals("<argnum>"))
-//         s = s.replaceFirst("<argnum>", want[i]);
-//       else if(tags[i].equals("<types>"))
-//       {
-//         temp = want[i].replace("[", "");
-//         temp = temp.replace("]", "");
-// 
-//         types = temp.split(", ");
-// 
-//         for(int j = 0; j < types.length; j++)
-//         {
-//           if(j == types.length-1 && j >= 1)
-//             st = st + "and ";
-// //           if(types[j].charAt(0) == 'i')
-// //             st = st + "an " + types[j];
-// //           else
-//             st = st /*+ "a " */+ types[j];
-// 
-//           if(j < types.length-1)
-//             st = st + ", ";
-//         }
-//         s = s.substring(0, s.indexOf("<types>"))
-//           + st
-//           + s.substring(s.indexOf("<types>") + "<types>".length());
-//       }
-//     }
-//     return s;
-//   }
   
   /**
    * Generate a random declaration (should be combined with generateAssignment()), like "int a;"
-   * @return 2x2 String array. Provide expression (0,0), expression (1,0), solve the expression (0,1), evaluation/solution (1,1).
+   * @return ChallengePair the object that contains two questions and two answers.  Sometimes the second question/answer can be null if irrelavent.
    */
 //   public String[][] generateDeclaration()
 //   {
@@ -191,83 +238,91 @@ public class RandomCode
   
   /**
    * Generate a random assignment (something = something else), should include some RandomArithmetic, generateFunctionCall(), and generateBooleanExpr()
-   * @return 2x2 String array. Provide expression (0,0), expression (1,0), solve the expression (0,1), evaluation/solution (1,1).
+   * @return ChallengePair the object that contains two questions and two answers.  Sometimes the second question/answer can be null if irrelavent.
    */
-//   public String[][] generateAssignment()
-//   {
-//     String q0 = "Provide an expression to assign <type> to the variable <var>.";
-//     String var = rs.randomName(4);
-//     String val = Types.randomVal();
-//     
-//     q0 = q0.replaceFirst("<type>", val);
-//     
-//     q0 = q0.replaceFirst("<var>", var);
-//     
-//     String a0 = var + " = " + val + ";";
-//     String a1 = var + "=" + val + ";";
-//     
-//     String[][] answers = new String[2][2];
-//     
-//     answers[0][0] = q0;
-//     answers[1][0] = a0;
-//     answers[1][1] = a1;
-//     
-//     return answers;
-//   }
+  public ChallengePair generateAssignment()
+  {
+    EnglishAST q0 = new EnglishAST("Provide an expression to ");
+    EnglishAST q1 = null;
+    StringFragment var = new StringFragment(rs.randomName(VAR_NAME_LENGTH));
+    ArrayList<Fragment> kids = new ArrayList<Fragment>();
+    ChallengePair value = getExp();
+    Fragment val = value.first.question;
+    String valstr = value.first.answer;
+    ArrayList<Fragment> funcargs = new ArrayList<Fragment>();
+    
+    kids.add(var);
+    if(val instanceof EnglishAST)
+    {
+      funcargs.addAll(((EnglishAST)val).children);
+      if(!funcargs.isEmpty())
+        kids.add(funcargs.remove(0));
+      else
+        kids.add(val);
+    }
+    else
+      kids.add(val);
+    
+//     System.out.println("!!! "+kids.size());
+    AssignmentFragment af = new AssignmentFragment(kids);
+    
+    q0.add(af);
+    q0.children.addAll(funcargs);
+    
+    String a0 = var.toString() + " = " + valstr + ";";
+    String a1 = "";
+    
+    
+    return new ChallengePair(q0,a0,q1,a1);
+  }
 //   
   /**
    * Generate a random JUnit test (includes generateFunctionCall())
-   * @return 2x2 String array. Provide expression (0,0), expression (1,0), solve the expression (0,1), evaluation/solution (1,1).
+   * @return ChallengePair the object that contains two questions and two answers.  Sometimes the second question/answer can be null if irrelavent.
    */
-//   public String[][] generateJUnit()
-//   {
-//     String q0 = "Provide a junit test for the function <func>.  We expect the function will return the value <val>.";
-//     String q1 = "Evaluate the junit test assuming the function returns the <cw> value.";
-//     int eq = random.nextInt(2);
-//     Types t = Types.randomType();
-//     String a0 = "assertEquals(@<func>, @<type>);";
-//     String a1 = "";
-//     
-//     String[][] func = generateFunctionCall();
-//     String exp = func[1][0];
-//     String act = t.randomSVal();
-//     
-//     q0 = q0.replaceFirst("<type>", t.typeName().toLowerCase());
-//     func[0][0] = func[0][0].replaceFirst("Provide a function call to ", "");
-//     func[0][0] = func[0][0].replaceFirst(" in that order.", "");
-//     q0 = q0.replaceFirst("<func>", func[0][0]);
-//     //not equal
-//     if(eq == 0)
-//     {
-//       q1 = q1.replaceFirst("<cw>","wrong");
-//       a1 = "false";
-//     }
-//     //equal
-//     else if(eq == 1)
-//     {
-//       q1 = q1.replaceFirst("<cw>","correct");
-//       a1 = "true";
-//     }
-//     q0 = q0.replaceFirst("<val>", act);
-//     a0 = a0.replaceFirst("@<func>", exp);
-//     a0 = a0.replaceFirst("@<type>", act);
-//     a0 = a0.replaceFirst(";", "");
-//     
-//     q0 = moveArgsToEnd(q0);
-//     
-//     String[][] answers = new String[2][2];
-//     
-//     answers[0][0] = q0;
-//     answers[0][1] = q1;
-//     answers[1][0] = a0;
-//     answers[1][1] = a1;
-//     
-//     return answers;
-//   }
+  public ChallengePair generateJUnit()
+  {
+    EnglishAST q0 = new EnglishAST("Provide a ");
+    String a0 = "assertEquals(@<func>, @<type>);";
+    String a1 = "";
+    
+    ChallengePair func = generateFunctionCall();
+    Fragment fval = func.first.question;
+    
+    String exp = func.first.answer;
+    String act = Types.randomVal();
+    
+    ArrayList<Fragment> kids = new ArrayList<Fragment>();
+    ArrayList<Fragment> funcargs = new ArrayList<Fragment>();
+    
+    //if the beginning is an EAST, get the args if there are function calls
+    if(fval instanceof EnglishAST)
+    {
+      funcargs.addAll(((EnglishAST)fval).children);
+      if(!funcargs.isEmpty())
+        kids.add(funcargs.remove(0));
+      else
+        kids.add(fval);
+    }
+    else
+      kids.add(fval);
+    
+    kids.add(new StringFragment(act));
+    
+    JUnitFragment jf = new JUnitFragment(kids);
+    
+    q0.add(jf);
+    q0.children.addAll(funcargs);
+    
+    a0 = a0.replaceFirst("@<func>", exp);
+    a0 = a0.replaceFirst("@<type>", act);
+    
+    return new ChallengePair(q0,a0,null,null);
+  }
   
   /**
    * Generate a random function header (public/private [static] return_type name (parameters))
-   * @return 2x2 String array. Provide expression (0,0), expression (1,0), solve the expression (0,1), evaluation/solution (1,1).
+   * @return ChallengePair the object that contains two questions and two answers.  Sometimes the second question/answer can be null if irrelavent.
    */
 //   public String[][] generateFunctionHeader()
 //   {
@@ -381,201 +436,345 @@ public class RandomCode
 //     return answers;
 //   }
   
-//   /**
-//    * Generate a random boolean expression
-//    * @param comparison true if we want to deal with numeric comparisons
-//    * @return 2x2 String array. Provide expression (0,0), expression (1,0), solve the expression (0,1), evaluation/solution (1,1).
-//    */
-//   public String[][] generateBooleanExpr(boolean comparison)
-//   {
-//     String q0 = "Provide the boolean expression for <val> <op> <val>";
-//     String q1 = "Now evaluate the expression";
-//     String a0 = "<val> <op> <val>";
-//     String a1 = "";
-//     
-//     BoolOps op = BoolOps.generateBoolOp(comparison);
-//     
-//     q0 = q0.replaceFirst("<op>", op.opName());
-//     
-//     a0 = a0.replaceFirst("<op>", op.toString());
-//     
-//     String[][] left = RandomArithmetic.getVal(comparison);
-//     String[][] right = RandomArithmetic.getVal(comparison);
-//     
-//     if(op.equals(BoolOps.NOT) 
-//       || op.equals(BoolOps.ITSELF))
-//     {
-//       q0 = q0.replaceFirst("<val> ", "");
-//       a0 = a0.replaceFirst("<val> ", "");
-//       a0 = a0.replaceAll(" ", "");
-//       if(!left[1][0].equals(left[1][1]))
-//       {
-//         q1 = q1 + " with " + left[1][0] + " = " + left[1][1] + ".";
-//       }
-//     }
-//     else
-//     {
-//       if(!left[1][0].equals(left[1][1]))
-//       {
-//         q1 = q1 + " with " + left[1][0] + " = " + left[1][1];
-//         if(!right[1][0].equals(right[1][1]))
-//         {
-//           q1 = q1 + " and " + right[1][0] + " = " + right[1][1];
-//         }
-//       }
-//       else if(!right[1][0].equals(right[1][1]))
-//       {
-//         q1 = q1 + " with " + right[1][0] + " = " + right[1][1];
-//       }
-//       q1 = q1 + ".";
-//     }
-//     
-//     
-//     boolean ans = false;
-//     if(!comparison)
-//     {
-//       boolean lv = Boolean.parseBoolean(left[1][1]);
-//       boolean rv = Boolean.parseBoolean(right[1][1]);
-//       switch(op)
-//       {
-//         case AND:
-//           ans = lv && rv;
-//           break;
-//         case OR:
-//           ans = lv || rv;
-//           break;
-//         case EQUALS:
-//           ans = lv == rv;
-//           break;
-//         case NOT_EQUAL:
-//           ans = lv != rv;
-//           break;
-//         case NOT:
-//           ans = !lv;
-//           break;
-//         case ITSELF:
-//           ans = lv;
-//           break;
-//         default:
-//           System.exit(1);
-//           break;
-//       }
-//     }
-//     else
-//     {
-//       int lv = Integer.parseInt(left[1][1]);
-//       int rv = Integer.parseInt(right[1][1]);
-//       switch(op)
-//       {
-//         case GREATER_THAN:
-//           ans = lv > rv;
-//           break;
-//         case GREATER_THAN_OR_EQUAL:
-//           ans = lv >= rv;
-//           break;
-//         case EQUALS:
-//           ans = lv == rv;
-//           break;
-//         case NOT_EQUAL:
-//           ans = lv != rv;
-//           break;
-//         case LESS_THAN:
-//           ans = lv < rv;
-//           break;
-//         case LESS_THAN_OR_EQUAL:
-//           ans = lv <= rv;
-//           break;
-//         default:
-//           System.exit(1);
-//           break;
-//       }
-//     }
-// //     System.out.println(op + " "+left[0][0] +" "+ left[1][0]);
-//     q0 = q0.replaceFirst("<val>", left[0][0]);
-//     a0 = a0.replaceFirst("<val>", left[1][0]);
-//     if(!op.equals(BoolOps.NOT) 
-//       && !op.equals(BoolOps.ITSELF))
-//     {
-//       q0 = q0.replaceFirst("<val>", right[0][0]);
-//       a0 = a0.replaceFirst("<val>", right[1][0]);
-//     }
-//     
-//     if(!left[1][0].equals(left[1][1]) && left[1][0].length() > 2)
-//     {
-//       //if not a variable.. it's a function call
-//       q0 = moveArgsToEnd(q0);
-//     }
-//     if(!right[1][0].equals(right[1][1]) && right[1][0].length() > 2)
-//     {
-//       //if not a variable.. it's a function call
-//       q0 = moveArgsToEnd(q0);
-//     }
-//     
-//     String[][] answers = new String[2][2];
-//     
-//     answers[0][0] = q0;
-//     answers[0][1] = q1;
-//     answers[1][0] = a0;
-//     answers[1][1] = String.valueOf(ans);
-//     
-//     return answers;
-//   }
-//   
-//   /**
-//    * Generate a random if statement (possibly make else a random appearance)
-//    * @return 2x2 String array. Provide expression (0,0), expression (1,0), solve the expression (0,1), evaluation/solution (1,1).
-//    */
-//   public String[][] generateIfStatement()
-//   {
-//     String q0 = "Build a statement such that, if <boolxp> is true then <exp>; otherwise <exp>.";
-//     String q1 = "";
-//     String a0 = "if(<boolxp>)\n{\n<exp>\n}\nelse\n{\n<exp>\n}";
-//     String a1 = "";
-//     Random r = new Random();
-//     int i = r.nextInt(1);
-//     String[][] boolxp = new String[2][2];
-//     if(i == 1)
-//     {
-//       boolxp = generateBooleanExpr(true);
-//     }
-//     else
-//     {
-//       boolxp = generateBooleanExpr(false);
-//     }
-//     
-//     boolxp[0][0] = boolxp[0][0].replaceFirst("Provide the boolean expression for ","");
-//     q0 = q0.replaceFirst("<boolxp>", boolxp[0][0]);
-//     a0 = a0.replaceFirst("<boolxp>", boolxp[1][0]);
-//     
-//     Types return_type = Types.randomType();
-//     //exp can be: return or complexReturn
-//     String[][] then = new String[2][2];
-//     String[][] els = new String[2][2];
-//     
-//     then = generateReturn(return_type);
-//     els = generateReturn(return_type);
-//     
-//     q0 = q0.replaceFirst("<exp>", then[0][0]);
-//     a0 = a0.replaceFirst("<exp>", then[1][0] + ";");
-//     
-//     q0 = q0.replaceFirst("<exp>", els[0][0]);
-//     a0 = a0.replaceFirst("<exp>", els[1][0] + ";");
-//     
-//     q0 = q0.replaceAll("G", "g");
-//     
-//     String[][] answers = new String[2][2];
-//     
-//     answers[0][0] = q0;
-//     answers[0][1] = q1;
-//     answers[1][0] = a0;
-//     answers[1][1] = a1;
-//     
-//     return answers;
-//   }
+  /**
+   * Generate a random boolean expression
+   * @param comparison true if we want to deal with numeric comparisons
+   * @return ChallengePair the object that contains two questions and two answers.  Sometimes the second question/answer can be null if irrelavent.
+   */
+  public ChallengePair generateBooleanExpr(boolean comparison)
+  {
+    EnglishAST q0 = new EnglishAST("Provide the expression for ");
+    EnglishAST q1 = new EnglishAST("Now evaluate the expression");
+    String a0 = "<val> <op> <val>";
+    String a1 = "";
+    
+    ArrayList<Fragment> kids = new ArrayList<Fragment>();
+    ArrayList<Fragment> funcargs = new ArrayList<Fragment>();
+    
+    BoolOps op = BoolOps.generateBoolOp(comparison);
+    a0 = a0.replaceFirst("<op>", op.toString());
+    
+    ChallengePair left = RandomArithmetic.getVal(comparison);
+    ChallengePair right = RandomArithmetic.getVal(comparison);
+    
+    
+    kids.add(left.first.question);
+    kids.add(right.first.question);
+    
+    if(op.equals(BoolOps.NOT) 
+      || op.equals(BoolOps.ITSELF))
+    {
+      a0 = a0.replaceFirst("<val> ", "");
+      a0 = a0.replaceAll(" ", "");
+      kids.remove(1);
+    }
+    
+    BooleanFragment bool = new BooleanFragment(op, kids);
+    q0.add(bool);
+    
+    EvalWithFragment with = new EvalWithFragment();
+    
+    //if left is a function call
+    if(kids.contains(left.first.question) && left.first.question instanceof FunctionCallExpFragment)
+    {
+      //add args to q0 as new sentence
+      q0.add(left.second.question);
+      //add value to with for q1
+      with.add(new StringFragment(left.first.answer + " = " + left.second.answer));
+    }
+    //if left is a variable
+    else if(kids.contains(left.first.question) && !left.first.answer.equals(left.second.answer))
+    {
+      //add value of variable for q1
+      with.add(new StringFragment(left.first.answer + " = " + left.second.answer));
+    }
+    
+    //if right is a function call
+    if(kids.contains(right.first.question) && right.first.question instanceof FunctionCallExpFragment)
+    {
+      //add args to q1 as new sentence
+      q0.add(right.second.question);
+      //add value of function call to with for q1
+      with.add(new StringFragment(right.first.answer + " = " + right.second.answer));
+    }
+    //if right is a variable
+    else if(kids.contains(right.first.question) && !right.first.answer.equals(right.second.answer))
+    {
+      //add value of right for q1
+      with.add(new StringFragment(right.first.answer + " = " + right.second.answer));
+    }
+    
+    //if there are some variables/functions
+    if(!with.children.isEmpty())
+    {
+      q1.add(with);
+    }
+    
+    //start evaluating the answer
+    
+    
+    boolean ans = false;
+    if(!comparison)
+    {
+      boolean lv = Boolean.parseBoolean(left.second.answer);
+      boolean rv = Boolean.parseBoolean(right.second.answer);
+      switch(op)
+      {
+        case AND:
+          ans = lv && rv;
+          break;
+        case OR:
+          ans = lv || rv;
+          break;
+        case EQUALS:
+          ans = lv == rv;
+          break;
+        case NOT_EQUAL:
+          ans = lv != rv;
+          break;
+        case NOT:
+          ans = !lv;
+          break;
+        case ITSELF:
+          ans = lv;
+          break;
+        default:
+          System.exit(1);
+          break;
+      }
+    }
+    else
+    {
+      int lv = Integer.parseInt(left.second.answer);
+      int rv = Integer.parseInt(right.second.answer);
+      switch(op)
+      {
+        case GREATER_THAN:
+          ans = lv > rv;
+          break;
+        case GREATER_THAN_OR_EQUAL:
+          ans = lv >= rv;
+          break;
+        case EQUALS:
+          ans = lv == rv;
+          break;
+        case NOT_EQUAL:
+          ans = lv != rv;
+          break;
+        case LESS_THAN:
+          ans = lv < rv;
+          break;
+        case LESS_THAN_OR_EQUAL:
+          ans = lv <= rv;
+          break;
+        default:
+          System.exit(1);
+          break;
+      }
+    }
+    
+    a0 = a0.replaceFirst("<val>", left.first.answer);
+    if(!op.equals(BoolOps.NOT) 
+      && !op.equals(BoolOps.ITSELF))
+    {
+      a0 = a0.replaceFirst("<val>", right.first.answer);
+    }
+    
+    return new ChallengePair(q0,a0,q1,String.valueOf(ans));
+  }
+  
+  /**
+   * Generate a random complex boolean expression (for example:
+   *   AND/ORing a bunch of simple boolean expressions together)
+   * @return ChallengePair the object that contains two questions and two answers.  Sometimes the second question/answer can be null if irrelavent.
+   */
+  public ChallengePair generateComplexBoolean()
+  {
+    EnglishAST q0 = new EnglishAST("Provide the expression for ");
+    EnglishAST q1 = new EnglishAST("Now evaluate it");
+    String a0 = "";
+    String a1 = "";
+    
+    boolean eval;
+    
+    Random r = new Random();
+    int boolcount = 3 + r.nextInt(MAX_BOOLEAN_EXPRESSIONS);
+    int andor = r.nextInt(2);
+    
+    BoolOps operator;
+    if(andor == 0)
+    {
+      operator = BoolOps.AND;
+      eval = true;
+    }
+    else
+    {
+      operator = BoolOps.OR;
+      eval = false;
+    }
+    
+    ArrayList<Fragment> kids = new ArrayList<Fragment>();
+    ArrayList<Fragment> funcargs = new ArrayList<Fragment>();
+    ArrayList<Fragment> with = new ArrayList<Fragment>();
+    
+    ChallengePair temp;
+    Fragment tempq;
+    Fragment tempq2;
+    ArrayList<Fragment> tempfargs = new ArrayList<Fragment>();
+    ArrayList<Fragment> tempwith = new ArrayList<Fragment>();
+    
+    int numorbool;
+    for(int i = 0; i < boolcount; i++)
+    {
+      tempfargs = new ArrayList<Fragment>();
+      
+      numorbool = r.nextInt(2);
+      if(numorbool == 1)
+      {
+        temp = generateBooleanExpr(true);
+      }
+      else
+      {
+        temp = generateBooleanExpr(false);
+      }
+      
+      tempq = temp.first.question;
+      tempq2 = temp.second.question;
+
+      //check to see if there are any functions, and add first child to
+      //  the list of kids
+      tempfargs.addAll(((EnglishAST)tempq).children);
+      if(!tempfargs.isEmpty())
+        kids.add(tempfargs.remove(0));
+      else
+        kids.add(tempq);
+      
+      //add the function arguments
+      funcargs.addAll(tempfargs);
+
+      //add the variable values for q1
+      //they are stored in temp.second.question.children.get(0).children
+      //  ie, the with fragment's children if it exists
+      if(!((EnglishAST)tempq2).children.isEmpty())
+      {
+        with.addAll(((EvalWithFragment)((EnglishAST)tempq2).children.get(0)).children);
+      }
+      
+      //add values for a0 as we go
+      if(i != boolcount-1)
+        a0 = a0 + "(" + temp.first.answer + ") " + operator.toString() + " ";
+      else
+        a0 = a0 + "(" + temp.first.answer + ")";
+      
+      //compute evaluation answer as we go (for a1)
+      if(operator.equals(BoolOps.AND))
+        eval &= Boolean.parseBoolean(temp.second.answer);
+      else if(operator.equals(BoolOps.OR))
+        eval |= Boolean.parseBoolean(temp.second.answer);
+    }
+    
+    BooleanFragment bool = new BooleanFragment(operator, kids);
+    q0.add(bool);
+    q0.children.addAll(funcargs);
+    
+    if(!with.isEmpty())
+    {
+      EvalWithFragment w = new EvalWithFragment(with);
+      q1.add(w);
+    }
+    
+    a1 = String.valueOf(eval);
+    
+    return new ChallengePair(q0, a0, q1, a1);
+  }
+  
+  /**
+   * Generate a random if statement (possibly make else a random appearance)
+   * @return ChallengePair the object that contains two questions and two answers.  Sometimes the second question/answer can be null if irrelavent.
+   */
+  public ChallengePair generateIfStatement()
+  {
+    EnglishAST q0 = new EnglishAST("Build a statement such that, ");
+    String a0 = "if(<boolxp>)\n{\n<exp>\n}\nelse\n{\n<exp>\n}";
+    
+    int i = random.nextInt(3);
+    ChallengePair boolxp;
+    //decide the what the guard will be
+    if(i == 2)
+    {
+      boolxp = generateComplexBoolean();
+    }
+    else if(i == 1)
+    {
+      boolxp = generateBooleanExpr(true);
+    }
+    else
+    {
+      boolxp = generateBooleanExpr(false);
+    }
+    
+    ArrayList<Fragment> kids = new ArrayList<Fragment>();
+    ArrayList<Fragment> funcargs = new ArrayList<Fragment>();
+    ArrayList<Fragment> tempfargs = new ArrayList<Fragment>();
+    ArrayList<Fragment> with = new ArrayList<Fragment>();
+    
+    Fragment temp = boolxp.first.question;
+    
+    //get the function arguments and guard for first child
+    tempfargs.addAll(((EnglishAST)temp).children);
+    if(!tempfargs.isEmpty())
+      kids.add(tempfargs.remove(0));
+    else
+      kids.add(temp);
+    funcargs.addAll(tempfargs);
+    tempfargs = new ArrayList<Fragment>();
+    
+    a0 = "if(" + boolxp.first.answer + ")\n{\n  ";
+    
+    //then block
+    ChallengePair then = getStatement();
+    temp = then.first.question;
+    //get the function arguments and statement for second child
+    tempfargs.addAll(((EnglishAST)temp).children);
+    if(!tempfargs.isEmpty())
+      kids.add(tempfargs.remove(0));
+    else
+      kids.add(temp);
+    funcargs.addAll(tempfargs);
+    tempfargs = new ArrayList<Fragment>();
+    
+    a0 = a0 + then.first.answer + "\n}\n";
+    
+    //decide if there's an else (50%)
+    int iselse = random.nextInt(2);
+    //if 1, we'll do an else
+    if(iselse == 1)
+    {
+      //else block
+      ChallengePair els = getStatement();
+      temp = els.first.question;
+      //get the function arguments and statement for second child
+      tempfargs.addAll(((EnglishAST)temp).children);
+      if(!tempfargs.isEmpty())
+        kids.add(tempfargs.remove(0));
+      else
+        kids.add(temp);
+      funcargs.addAll(tempfargs);
+      tempfargs = new ArrayList<Fragment>();
+      
+      a0 = a0 + "else\n{\n  " + els.first.answer + "\n}\n";
+    }
+    
+    IfFragment iff = new IfFragment(kids);
+    q0.add(iff);
+    q0.children.addAll(funcargs);
+    
+    return new ChallengePair(q0, a0, null, null);
+  }
 //   
 //   /**
 //    * Generate a random while statement
-//    * @return 2x2 String array. Provide expression (0,0), expression (1,0), solve the expression (0,1), evaluation/solution (1,1).
+//    * @return ChallengePair the object that contains two questions and two answers.  Sometimes the second question/answer can be null if irrelavent.
 //    */
 //   public String[][] generateWhileStatement()
 //   {
@@ -614,30 +813,67 @@ public class RandomCode
 //     return answers;
 //   }
 //   
-//   /**
-//    * Given a sentence, move the arguments for a function call to the end
-//    * Assumes the sentence contains a function call
-//    * @param s the sentence with one function calls
-//    * @return the problem sentence followed by a separate sentence specifying the function arguments
-//    */
-//   public static String moveArgsToEnd(String s)
-//   {
-//     int order = s.indexOf("order") + 5;
-//     String args = "";
-//     String sentence = s;
-//     //one argument
-//     if(order >= 5)
-//     {
-//       args = s.substring(s.indexOf("."), order);
-//     }
-//     else if (order < 5 && s.indexOf("argument:") != -1)
-//     {
-//       order = s.indexOf(" ", s.indexOf("argument:")+2); //first space after
-//       args = s.substring(s.indexOf("."), order);
-//     }
-//     sentence = s.replaceFirst(args, "") + args;
-//     
-//     return sentence;
-// //     return s;
-//   }
+
+  /**
+   * Generate a function with only a return statement
+   */
+  public ChallengePair generateSimpleFunction()
+  {
+    EnglishAST q0 = new EnglishAST("Write the ");
+    String a0 = "public ";
+    
+    boolean pub = true;
+    if(random.nextInt(2) == 1)
+    {
+      pub = false;
+      a0 = "private ";
+    }
+    
+    String name = rs.randomName(FUNCTION_NAME_LENGTH);
+    
+    ChallengePair ret = generateReturn();
+    Fragment temp = ret.first.question;
+    
+    Types type = Types.INT;
+    if(((ReturnFragment)((EnglishAST)temp).children.get(0)).children.get(0) instanceof BooleanFragment)
+      type = Types.BOOLEAN;
+    
+    a0 = a0 + type.typeName() + " " + name + "(";
+    
+    ArrayList<Fragment> kids = new ArrayList<Fragment>();
+    ArrayList<Fragment> funcargs = new ArrayList<Fragment>();
+    ArrayList<Fragment> params = new ArrayList<Fragment>();
+    
+    int numparams = random.nextInt(FUNCTION_MAX_PARAMS);
+    for(int i = 0; i < numparams; i++)
+    {
+      String t = Types.randomType().typeName();
+      String n = rs.randomName(VAR_NAME_LENGTH);
+      params.add(new StringFragment(t + " " + n));
+      
+      a0 = a0 + t + " " + n;
+      if(i < numparams-1)
+        a0 = a0 + ", ";
+    }
+    
+    a0 = a0 + ")\n{\n  ";
+    
+    ParameterFragment p = new ParameterFragment(params);
+    kids.add(p);
+    
+    //get the function arguments for the return
+    funcargs.addAll(((EnglishAST)temp).children);
+    if(!funcargs.isEmpty())
+      kids.add(funcargs.remove(0));
+    else
+      kids.add(temp);
+    
+    FunctionFragment ff = new FunctionFragment(pub, type, name, kids);
+    q0.add(ff);
+    q0.children.addAll(funcargs);
+    
+    a0 = a0 + ret.first.answer + ";\n}\n";
+    
+    return new ChallengePair(q0, a0, null, null);
+  }
 }

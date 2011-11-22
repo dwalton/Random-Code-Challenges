@@ -1,9 +1,17 @@
 import java.util.ArrayList;
 
+/**
+ * The Fragment for adding specific arguments to function calls
+ *   at the end of a question (as a separate sentence)
+ * Currently each FunctionCallArgsFragment is a separate child
+ *   of the root of the question (EnglishAST)
+ * Each child of this class is a simple StringFragment
+ *   but later we will probably expand it to all
+ *   expression types
+ */
 public class FunctionCallArgsFragment extends Fragment
 {
   public ArrayList<Fragment> children;
-  public Fragment parent;
   public String text;
   
   public FunctionCallArgsFragment(String fname)
@@ -12,12 +20,17 @@ public class FunctionCallArgsFragment extends Fragment
       + " takes <num> arguments: ";
     children = new ArrayList<Fragment>();
   }
+  public FunctionCallArgsFragment(String fname, ArrayList<Fragment> kids)
+  {
+    text = "The function " + fname 
+    + " takes <num> arguments: ";
+    children = kids;
+  }
+  
   
   public void add(Fragment f)
   {
     children.add(f);
-    children.get(children.size()-1).parent = this;
-    children.get(children.size()-1).checkParent();
   }
   
   
@@ -41,9 +54,9 @@ public class FunctionCallArgsFragment extends Fragment
     }
     
     if(size > 1)
-      t1 = t0 + " in that order.";
+      t1 = t0 + " in that order";
     else if(size == 0)
-      t1 = t0.replaceFirst(": ",".");
+      t1 = t0.replaceFirst(": ","");
     else
     {
       t1 = t0.replaceFirst("arguments", "argument");

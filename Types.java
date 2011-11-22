@@ -42,33 +42,8 @@ public enum Types
    */
   public static String randomVal()
   {
-    RandomStrings r = new RandomStrings();
-    String s = "";
     Types t = randomType();
-    switch(t)
-    {
-      case STRING:
-        s = "\"" + r.randomName(5) + "\"";
-        break;
-      case CHAR:
-        s = "\'" + r.randomName(1) + "\'";
-        break;
-      case INT:
-        s = String.valueOf((new Random()).nextInt(50));
-        break;
-      case DOUBLE:
-        s = String.valueOf((new Random()).nextInt(50)) + "." + String.valueOf((new Random()).nextInt(100));
-        break;
-      case BOOLEAN:
-        if((new Random()).nextInt(2) == 1)
-          s = "true";
-        else
-          s = "false";
-        break;
-      default:
-        break;
-    }
-    return s;
+    return t.randomSVal();
   }
   
   /**
@@ -80,7 +55,6 @@ public enum Types
   {
     RandomStrings r = new RandomStrings();
     String s = "";
-    Types t = randomType();
     switch(this)
     {
       case STRING:

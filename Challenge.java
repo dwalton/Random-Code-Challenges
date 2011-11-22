@@ -22,6 +22,11 @@ public class Challenge
   
   public String toString()
   {
-    return question.toString() + "\n" + answer.toString();
+    String ret = "";
+    if(question != null)
+      ret = ret + question.toString() + "\n";
+    if(answer != null)
+      ret = ret + answer.toString();
+    return ret;
   }
 }

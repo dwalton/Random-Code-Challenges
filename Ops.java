@@ -89,6 +89,7 @@ public enum Ops
         break;
       case DIVIDE:
         s = "dividing";
+        break;
       case MODULO:
         s = "moding";
         break;

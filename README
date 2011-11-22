@@ -1,0 +1,17 @@
+Random Code Challenges
+
+This project is meant to create programming problems
+for beginning Computer Science and Software Engineering
+students.  The main problem I've been tackling is the
+translation of English text to code and vis-versa.
+
+Currently, it can make random:
+simple and nested math problems
+simple and nested boolean expressions
+function calls
+return statements
+variable assignments
+if statements
+one line functions
+
+

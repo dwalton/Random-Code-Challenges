@@ -1,13 +1,16 @@
 import java.util.ArrayList;
 /**
  * This class represents an English problem statement
- * It contains several sentences that can will be put
- * together from left to right.
+ * It contains several sentences that will be put
+ *   together from left to right
+ * The first child is the main part of the problem
+ *   and the rest are extra sentences with more
+ *   detail (ie FunctionCallArgsFragment for giving
+ *   the values to use as arguments for a function)
  */
 public class EnglishAST extends Fragment
 {
   public ArrayList<Fragment> children;
-  public Fragment parent;
   public String text;
   
   public EnglishAST(String n, ArrayList<Fragment> c)
@@ -19,22 +22,23 @@ public class EnglishAST extends Fragment
   public EnglishAST(String root)
   {
     text = root;
-    parent = null;
     children = new ArrayList<Fragment>();
   }
   
   public EnglishAST(Fragment root)
   {
     text = root.text;
-    parent = null;
     children = root.children;
   }
   
   public void add(Fragment f)
   {
     children.add(f);
-    children.get(children.size()-1).parent = this;
-    children.get(children.size()-1).checkParent();
+  }
+  
+  public boolean hasFunctions()
+  {
+    return children.size() > 1;
   }
   
   public String toString()
@@ -47,7 +51,7 @@ public class EnglishAST extends Fragment
     {
 //       System.out.println(i);
       t0 = ret;
-      ret = t0 + " " + children.get(i).toString();
+      ret = t0 + " " + children.get(i).toString() + ". ";
     }
     
     if(children.size() == 0)

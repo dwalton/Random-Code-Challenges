@@ -42,40 +42,13 @@ public class RandomArithmetic
   }
 
   /**
-   * Generate the problem text with tags replaced
+   * REMOVED - Generate the problem text with tags replaced
    * @param verb if true adds "ing" to the operation
    * @param sentence the basic sentence with tags that need to be replaced
    * @param numl the left variable/number
    * @param numr the right variable/number
    */
 //   public String generateProblem(boolean verb, String sentence, Ops op, String numl, String numr)
-//   {
-//     String problem = sentence;
-//     String temp;
-//     String lf, rt = "";
-//     lf = numl;
-//     rt = numr;
-// 
-//     if(op != null && op.equals(Ops.SUBTRACT))
-//     {
-//       temp = lf;
-//       lf = rt;
-//       rt = temp;
-//     }
-//     
-//     if(verb)
-//       problem = addIng(op, problem);
-//     else if (op != null)
-//       problem = problem.replaceFirst("<op>", op.opName());
-//     problem = problem.replaceFirst("<num>", String.valueOf(lf));
-//     problem = problem.replaceFirst("<num>", String.valueOf(rt));
-//     if(op != null)
-//       problem = connectingWord(op, problem, "<con>");
-// 
-//     //commented out because operator no longer starts the sentence.
-//     //problem = problem.substring(0,1).toUpperCase() + problem.substring(1);
-//     return problem;
-//   }
 //   
 
 
@@ -99,7 +72,7 @@ public class RandomArithmetic
     int rt = Integer.parseInt(right.second.answer);
     int sol = 0;
     Ops operation = Ops.generateOp();
-    ArithmeticFragment math = new ArithmeticFragment(operation);
+    
     switch (operation)
     {
       case ADD:
@@ -136,28 +109,41 @@ public class RandomArithmetic
     a0 = left.first.answer + " " + operation + " " + right.first.answer;
     a1 = String.valueOf(sol);
     
-    math.add(left.first.question);
-    math.add(right.first.question);
+    ArrayList<Fragment> m = new ArrayList<Fragment>();
+    m.add(left.first.question);
+    m.add(right.first.question);
+    ArithmeticFragment math = new ArithmeticFragment(operation, m, isSub);
     q0.add(math);
     
     EvalWithFragment with = new EvalWithFragment();
     
+    //if left is a function call
     if(left.first.question instanceof FunctionCallExpFragment)
     {
+      //add args to q0 as new sentence
       q0.add(left.second.question);
+      //add value to with for q1
       with.add(new StringFragment(left.first.answer + " = " + left.second.answer));
     }
+    //if left is a variable
     else if(!left.first.answer.equals(left.second.answer))
     {
+      //add value of variable for q1
       with.add(new StringFragment(left.first.answer + " = " + left.second.answer));
     }
+    
+    //if right is a function call
     if(right.first.question instanceof FunctionCallExpFragment)
     {
+      //add args to q1 as new sentence
       q0.add(right.second.question);
+      //add value of function call to with for q1
       with.add(new StringFragment(right.first.answer + " = " + right.second.answer));
     }
+    //if right is a variable
     else if(!right.first.answer.equals(right.second.answer))
     {
+      //add value of right for q1
       with.add(new StringFragment(right.first.answer + " = " + right.second.answer));
     }
     
@@ -172,10 +158,10 @@ public class RandomArithmetic
   /**
    * Generate a complex problem that can have multiple operations
    * Just starting with 1 layer of nested stuff
-   * @param nests how deep to nest problems (only one level implemented)
+   * @param nests REMOVED - how deep to nest problems (only one level implemented)
    * @return 2x2 String array. Provide expression (0,0), expression (1,0), solve the expression (0,1), evaluation/solution (1,1).
    */
-  public ChallengePair generateComplex(int nests)
+  public ChallengePair generateComplex()
   {
     int sol = 0;
     
@@ -259,7 +245,6 @@ public class RandomArithmetic
 
     lf = Integer.parseInt(left.second.answer);
     rt = Integer.parseInt(right.second.answer);
-    ArithmeticFragment math = new ArithmeticFragment(operation);
     
     switch (operation)
     {
@@ -310,8 +295,11 @@ public class RandomArithmetic
 //       math.add(left.first.question);
 //       math.add(((EnglishAST)level2.first.question).children.get(0));
 //     }
-    math.add(left.first.question);
-    math.add(right.first.question);
+    ArrayList<Fragment> m = new ArrayList<Fragment>();
+    m.add(left.first.question);
+    m.add(right.first.question);
+    
+    ArithmeticFragment math = new ArithmeticFragment(operation, m, false);
     q0.add(math);
     
     EvalWithFragment with = new EvalWithFragment();
@@ -433,15 +421,24 @@ public class RandomArithmetic
         break;
       case 4:
         i = r.nextInt(1);
-        answers = rc.generateFunctionCall();
+        temp = rc.generateFunctionCall();
+        String ans;
+
         if(i == 0)
         {
-          answers.second.answer = "false";
+          ans = "false";
         }
         else
         {
-          answers.second.answer = "true";
+          ans = "true";
         }
+        
+        answers = new ChallengePair(
+          ((EnglishAST)temp.first.question).children.get(0),
+          temp.first.answer,
+          ((EnglishAST)temp.first.question).children.get(1),
+          ans
+        );
         break;
       default:
         break;

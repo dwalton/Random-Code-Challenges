@@ -12,16 +12,8 @@ public class TestRandomArithmetic
     System.out.println();
 
     System.out.println("Random complex:");
-    ChallengePair test2 = ra.generateComplex(1);
+    ChallengePair test2 = ra.generateComplex();
     System.out.println(test2);
 
-    System.out.println();
-
-//     System.out.println("Random Complex with one variable:");
-//     String[][] testComplexVar = ra.generateComplex(true, 1);
-//     System.out.println(testComplexVar[0][0]);
-//     System.out.println(testComplexVar[1][0]);
-//     System.out.println(testComplexVar[0][1]);
-//     System.out.println(testComplexVar[1][1]);
   }
 }
