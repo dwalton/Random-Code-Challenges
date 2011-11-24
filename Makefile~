@@ -1,5 +1,9 @@
 all:
-	javac *.java */*.java
+	javac */*.java 
+code:
+	java TestRandomCode
+math:
+	java TestRandomArithmetic
 clean:
 	rm *.class
 

@@ -1,5 +1,6 @@
 all:
-	javac *.java 
+	javac */*.java 
+	mv */*.class .
 code:
 	java TestRandomCode
 math:
