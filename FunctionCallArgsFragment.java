@@ -60,7 +60,6 @@ public class FunctionCallArgsFragment extends Fragment
     else
     {
       t1 = t0.replaceFirst("arguments", "argument");
-      t1 = t1 + ".";
     }
     t0 = t1;
     

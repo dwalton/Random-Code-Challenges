@@ -11,17 +11,26 @@ import java.util.ArrayList;
 public class FunctionCallExpFragment extends Fragment
 {
   public ArrayList<Fragment> children;
-  public String text;
+  public String name;
+  boolean isExp;
   
   public FunctionCallExpFragment(String fname)
   {
-    text = "a function call to " + fname;
+    name = fname;
     children = new ArrayList<Fragment>();
+    isExp = true;
   }
   public FunctionCallExpFragment(String fname, ArrayList<Fragment> kids)
   {
-    text = "a function call to " + fname;
+    name = fname;
     children = kids;
+    isExp = true;
+  }
+  public FunctionCallExpFragment(String fname, ArrayList<Fragment> kids, boolean b)
+  {
+    name = fname;
+    children = kids;
+    isExp = b;
   }
   
   public void add(Fragment f)
@@ -31,7 +40,12 @@ public class FunctionCallExpFragment extends Fragment
   
   public String toString()
   {
-    return text;
+    if(!isExp)
+    {
+      return "call the function " + name;
+    }
+    else
+      return "a function call to " + name;
   }
   
 }

@@ -189,7 +189,7 @@ public class RandomArithmetic
           level2.second.answer //number answer
         );
       
-        l2with.addAll(level2.second.question.children.get(0).children);
+        l2with.addAll(((EnglishAST)level2.second.question).children);
       }
       else
       {
@@ -222,7 +222,7 @@ public class RandomArithmetic
           level2.second.answer //number answer
         );
       
-        l2with.addAll(level2.second.question.children.get(0).children);
+        l2with.addAll(((EnglishAST)level2.second.question).children);
       }
       else
       {
@@ -331,19 +331,8 @@ public class RandomArithmetic
       }
     }
     
-    if(l2with.size() > 0)
-    {
-      for(int i = 0; i < l2with.size(); i++)
-      {
-        with.add(l2with.get(i));
-      }
-    }
-    
-    if(with.children.size() > 0)
-    {
-      q1.add(with);
-    }
-    
+    with.children.addAll(l2with);
+    q1.add(with);    
     
     return new ChallengePair(q0,a0,q1,a1);
 
@@ -395,7 +384,7 @@ public class RandomArithmetic
         break;
       case 2:
         i = r.nextInt(maxint);
-        ChallengePair temp = rc.generateFunctionCall();
+        ChallengePair temp = rc.generateFunctionCall(true);
         
         answers = new ChallengePair(
           ((EnglishAST)temp.first.question).children.get(0),
@@ -421,7 +410,7 @@ public class RandomArithmetic
         break;
       case 4:
         i = r.nextInt(1);
-        temp = rc.generateFunctionCall();
+        temp = rc.generateFunctionCall(true);
         String ans;
 
         if(i == 0)

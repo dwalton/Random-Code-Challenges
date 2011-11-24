@@ -16,13 +16,13 @@ public class AssignmentFragment extends Fragment
   
   public AssignmentFragment(ArrayList<Fragment> kids)
   {
-    text = "assign <1> to <0>";
+    text = "assigns <0> to <1>";
     children = kids;
   }
   
   public String toString()
   {
-    return "assign " + children.get(1).toString() + " to " + children.get(0).toString();
+    return "assigns " + children.get(0).toString() + " the value of " + children.get(1).toString();
   }
   
 }

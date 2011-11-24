@@ -5,7 +5,7 @@ public class TestRandomCode
     RandomCode rc = new RandomCode();
     
     System.out.println("Random function call:");
-    ChallengePair testfc = rc.generateFunctionCall();
+    ChallengePair testfc = rc.generateFunctionCall(false);
     System.out.println(testfc);
 
 //     System.out.println();

@@ -56,9 +56,32 @@ public enum BoolOps
    */
   public String opName()
   {
-    if(super.toString().toLowerCase().equals("itself"))
-      return "the boolean";
-    return super.toString().toLowerCase().replaceAll("_"," ");
+    String ret = super.toString().toLowerCase().replaceAll("_"," ");
+    switch(this)
+    {
+      case AND:
+      case OR:
+      case NOT:
+        break;
+      case NOT_EQUAL:
+      case LESS_THAN_OR_EQUAL:
+      case GREATER_THAN_OR_EQUAL:
+        ret = "is " + ret + " to";
+        break;
+      case EQUALS:
+        ret = "is equal to";
+        break;
+      case LESS_THAN:
+      case GREATER_THAN:
+        ret = "is " + ret;
+        break;
+      case ITSELF:
+        ret = "the boolean";
+        break;
+      default:
+        break;
+    }
+    return ret;
   }
 
   /**

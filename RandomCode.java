@@ -145,7 +145,7 @@ public class RandomCode
         ret = generateAssignment();
         break;
       case 2: //function call
-        ret = generateFunctionCall();
+        ret = generateFunctionCall(false);
         break;
       //more later...
       default:
@@ -160,21 +160,20 @@ public class RandomCode
    * Generate a random function call
    * @return ChallengePair the object that contains two questions and two answers.  Sometimes the second question/answer can be null if irrelavent.
    */
-  public ChallengePair generateFunctionCall()
+  public ChallengePair generateFunctionCall(boolean isExp)
   {
     String fname = rs.randomName(FUNCTION_NAME_LENGTH);
     int numargs = random.nextInt(FUNCTION_MAX_ARGS);
     
-    EnglishAST q0 = new EnglishAST("Provide");
+    EnglishAST q0 = new EnglishAST("");
     String a0;
     EnglishAST q1 = null;//new EnglishAST("");
     String a1 = "";
     
-    FunctionCallExpFragment func = new FunctionCallExpFragment(fname);
+    ArrayList<Fragment> kids = new ArrayList<Fragment>();
     
     FunctionCallArgsFragment fargs = new FunctionCallArgsFragment(fname);
     
-    q0.add(func);
     
     String[] types = new String[numargs];
     for(int i = 0; i < numargs; i++)
@@ -183,6 +182,8 @@ public class RandomCode
       fargs.add(new StringFragment(types[i]));
     }
     
+    FunctionCallExpFragment func = new FunctionCallExpFragment(fname, kids, isExp);
+    q0.add(func);
     q0.add(fargs);
     
     String solution = fname + "(";
@@ -242,7 +243,7 @@ public class RandomCode
    */
   public ChallengePair generateAssignment()
   {
-    EnglishAST q0 = new EnglishAST("Provide an expression to ");
+    EnglishAST q0 = new EnglishAST("Provide an statement that ");
     EnglishAST q1 = null;
     StringFragment var = new StringFragment(rs.randomName(VAR_NAME_LENGTH));
     ArrayList<Fragment> kids = new ArrayList<Fragment>();
@@ -283,10 +284,10 @@ public class RandomCode
   public ChallengePair generateJUnit()
   {
     EnglishAST q0 = new EnglishAST("Provide a ");
-    String a0 = "assertEquals(@<func>, @<type>);";
+    String a0 = "assertEquals(@<type>, @<func>);";
     String a1 = "";
     
-    ChallengePair func = generateFunctionCall();
+    ChallengePair func = generateFunctionCall(true);
     Fragment fval = func.first.question;
     
     String exp = func.first.answer;
@@ -443,7 +444,7 @@ public class RandomCode
    */
   public ChallengePair generateBooleanExpr(boolean comparison)
   {
-    EnglishAST q0 = new EnglishAST("Provide the expression for ");
+    EnglishAST q0 = new EnglishAST("Provide the expression that computes whether");
     EnglishAST q1 = new EnglishAST("Now evaluate the expression");
     String a0 = "<val> <op> <val>";
     String a1 = "";
@@ -590,7 +591,7 @@ public class RandomCode
    */
   public ChallengePair generateComplexBoolean()
   {
-    EnglishAST q0 = new EnglishAST("Provide the expression for ");
+    EnglishAST q0 = new EnglishAST("Provide the expression that computes ");
     EnglishAST q1 = new EnglishAST("Now evaluate it");
     String a0 = "";
     String a1 = "";
@@ -695,7 +696,7 @@ public class RandomCode
   public ChallengePair generateIfStatement()
   {
     EnglishAST q0 = new EnglishAST("Build a statement such that, ");
-    String a0 = "if(<boolxp>)\n{\n<exp>\n}\nelse\n{\n<exp>\n}";
+    String a0 = "if(<boolxp>)\n{\n<exp>;\n}\nelse\n{\n<exp>\n}";
     
     int i = random.nextInt(3);
     ChallengePair boolxp;

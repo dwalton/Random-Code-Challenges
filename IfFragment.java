@@ -36,7 +36,7 @@ public class IfFragment extends Fragment
     if(kidcount >= 2)
     {
       temp = ret + children.get(0).toString() 
-        + " evaluates to true then, "
+        + " then, "
         + children.get(1).toString();
       ret = temp;
     }
