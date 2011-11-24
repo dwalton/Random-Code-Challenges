@@ -1,0 +1,93 @@
+SIMPLE MATH
+Provide the expression you would use to add 10 and h.
+Now evaluate the expression you just made with h = 12.
+
+Provide the expression you would use to subtract 0 from 1.
+Now evaluate the expression you just made.
+
+Provide the expression you would use to multiply b and 15.
+Now evaluate the expression you just made with b = 9.
+
+SIMPLE MATH WITH ANOTHER LEVEL
+Provide the expression you would use to divide 1 by the result of multiplying 19 and 9.
+Now evaluate the expression you just made.
+
+Provide the expression you would use to divide a function call to t by the result of subtracting a function call to evl from d.  t is a function that takes 4 arguments: "y", 'u', 'm', and 40 in that order.  evl is a function that takes 0 arguments. 
+Now evaluate the expression you just made with d = 6, evl() = 13 and t("y", 'u', 'm', 40) = 1.
+
+Provide the expression you would use to subtract the result of moding x by t from 14.
+Now evaluate the expression you just made with x = 9 and t = 1.
+
+FUNCTION CALL
+Provide a function call to dyrye.  dyrye is a function that takes 1 argument: 24.61.
+
+Provide a function call to auumyx.  auumyx is a function that takes 2 arguments: 34, and a function call to fgf in that order.  fgf is a function that takes 1 argument: 7.
+
+RETURN STATEMENT
+Give the statement that returns j.
+
+Give the statement that returns a function call to asdddd.  asdddd is a function that takes 0 arguments.
+
+DECLARATIONS
+Provide an expression to declare the variable o as a string.
+
+Provide an expression to declare the variable a as an int with the value of a function call to g.  g is a function call that takes 2 arguments: 4 and false in that order.
+
+ASSIGNMENTS
+Provide an expression to assign 46 to the variable jys.
+
+Provide an expression to assign a function call to f to the variable b.  f is a function that takes 0 arguments.
+
+JUNIT
+Provide a junit test for the function mjos.  We expect the function will return the value 'm'.  mjos is a function that takes 3 arguments: 'n', false, and true in that order.
+
+Provide a junit test for the function n.  We expect the function will return the value 22.  n is a function that takes 4 arguments: 'f', 't', "liex", and 2 in that order.
+
+FUNCTION HEADER
+Provide a header for a static public function called kganf that returns an int and has 0 parameters.
+
+Provide a header for a static public function called ss that returns a String and has 2 parameters: a boolean ip_c, and a boolean oeyl.
+
+Provide a header for a private function called kbk that returns a boolean and has 4 parameters: a double th, a double klm, an int tl, and a boolean ef.
+
+NUMERIC COMPARISON
+Provide the boolean expression for 12 greater than n.
+Now evaluate the expression with n = 4.
+
+Provide the boolean expression for 3 not equal a function call to fh.  fh is a function that takes 1 argument: "rxl".
+Now evaluate the expression with fh("rxl") = 18.
+
+BOOLEAN EXPRESSION
+Provide the boolean expression for a function call to btq or t. btq is a function that takes 2 arguments: false, and 25.81 in that order
+Now evaluate the expression with btq(false, 25.81) = false and t = false.
+
+Provide the boolean expression for not p.
+Now evaluate the expression with p = false.
+
+Provide the boolean expression for a function call to yuib not equal a function call to fdwfsd.  yuib is a function that takes 4 arguments: 18.86, 37.21, "kq", and "px" in that order.  fdwfsd is a function that takes 2 arguments: true, and 'x' in that order.
+Now evaluate the expression with yuib(18.86, 37.21, "kq", "px") = false and fdwfsd(true, 'x') = false.
+
+BOOLEAN CHAIN
+Provide the expression for whether one of the following is true: a less than 7, b less than or equal to c, and add x and 1 equals 19.
+Now evaluate it with a = 4, b = 2, c = 1, and x = 15.
+
+Provide the expression for whether all of the following are true: g, not c, 12 greater than f, and a does not equal b.
+Now evaluate it with g = false, c = false, f = 28, a = 2, and b = 4.
+
+IF STATEMENTS
+Build a statement such that, if a function call to qmdben and a function call to viuqpgg is true then give the statement that returns a function call to apeq; otherwise give the statement that returns b.  qmdben is a function that takes 4 arguments: 38, 7.35, 21.80, and "oweju" in that order.  viuqpgg is a function that takes 2 arguments: true, and false in that order.  apeq is a function that takes 1 argument: false.
+
+Build a statement such that, if not a function call to ttdprc is true then give the statement that returns 'j'; otherwise give the statement that returns 't'.  ttdprc is a function that takes 0 arguments.
+
+
+INCREMENT AN INTEGER
+Write the statement that increments the variable x by 9.
+
+Write the statement that decrements the variable z by 2.
+
+Write the statement that sets y equal to itself divided by g.
+
+Write the statement that sets k equal to itself modulo 13.
+
+WHILE STATEMENTS
+Build a statement such that, while a function call to gcqwe or a function call to jw is true then keep incrementing j by f. jw is a function that takes 1 argument: 'e'. gcqwe is a function that takes 2 arguments: true, and 'b' in that order.
