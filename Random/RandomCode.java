@@ -875,7 +875,7 @@ public class RandomCode
     q0.add(ff);
     q0.children.addAll(funcargs);
     
-    a0 = a0 + ret.first.answer + ";\n}\n";
+    a0 = a0 + ret.first.answer + "\n}\n";
     
     return new ChallengePair(q0, a0, null, null);
   }
