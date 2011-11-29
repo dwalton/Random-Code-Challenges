@@ -33,4 +33,9 @@ public class ChallengePair
     return first.toString() + "\n" + second.toString();
   }
   
+  public String toGoogleForm()
+  {
+    return "\"" + first.question.toString().replaceAll("\"", "\"\"") + "\"";
+  }
+  
 }
