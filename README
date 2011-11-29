@@ -14,4 +14,11 @@ variable assignments
 if statements
 one line functions
 
+To run some tests or see some examples do:
+make
+then either:
+make code
+make math
 
+make code runs Test/TestRandomCode.java
+make math runs Test/TestRandomArithmetic.java
