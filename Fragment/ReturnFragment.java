@@ -6,33 +6,19 @@ import java.util.ArrayList;
  */
 public class ReturnFragment extends Fragment
 {
-  public ArrayList<Fragment> children;
-  public String text;
   
   public ReturnFragment()
   {
-    text = "returns <0>";
     children = new ArrayList<Fragment>();
   }
-  public ReturnFragment(String s)
+  public ReturnFragment(ArrayList<Fragment> kids)
   {
-    text = s;
-    children = new ArrayList<Fragment>();
-  }
-  public ReturnFragment(String s, ArrayList<Fragment> kids)
-  {
-    text = s;
     children = kids;
-  }
-  
-  public void add(Fragment f)
-  {
-    children.add(f);
   }
   
   public String toString()
   {
-    return text.replaceFirst("<0>", children.get(0).toString());
+    return "returns " + children.get(0).toString();
   }
   
 }

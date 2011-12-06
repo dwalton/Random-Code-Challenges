@@ -8,9 +8,6 @@ import java.util.ArrayList;
  */
 public class ParameterFragment extends Fragment
 {
-  public String text;
-  public ArrayList<Fragment> children;
-  
   
   public ParameterFragment(ArrayList<Fragment> kids)
   {

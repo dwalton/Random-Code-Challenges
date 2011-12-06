@@ -11,12 +11,9 @@ import java.util.ArrayList;
  */
 public class AssignmentFragment extends Fragment
 {
-  public ArrayList<Fragment> children;
-  public String text;
   
   public AssignmentFragment(ArrayList<Fragment> kids)
   {
-    text = "assigns <0> to <1>";
     children = kids;
   }
   

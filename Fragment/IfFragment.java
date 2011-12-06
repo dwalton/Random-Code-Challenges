@@ -12,8 +12,6 @@ import java.util.ArrayList;
  */
 public class IfFragment extends Fragment
 {
-  public ArrayList<Fragment> children;
-  public String text;
   
   public IfFragment()
   {

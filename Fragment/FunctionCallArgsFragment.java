@@ -11,8 +11,6 @@ import java.util.ArrayList;
  */
 public class FunctionCallArgsFragment extends Fragment
 {
-  public ArrayList<Fragment> children;
-  public String text;
   
   public FunctionCallArgsFragment(String fname)
   {

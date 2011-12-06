@@ -9,8 +9,6 @@ import java.util.ArrayList;
  */
 public class FunctionFragment extends Fragment
 {
-  public String text;
-  public ArrayList<Fragment> children;
   
   public boolean pub;
   public String name;

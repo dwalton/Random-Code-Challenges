@@ -10,8 +10,6 @@ import java.util.ArrayList;
  */
 public class EnglishAST extends Fragment
 {
-  public ArrayList<Fragment> children;
-  public String text;
   
   public EnglishAST(String n, ArrayList<Fragment> c)
   {

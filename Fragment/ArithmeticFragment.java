@@ -12,18 +12,13 @@ import java.util.ArrayList;
  */
 public class ArithmeticFragment extends Fragment
 {
-  public ArrayList<Fragment> children;
-  public String text;
-  
   public boolean subLevel;
   
   public Ops operator;
   
   public ArithmeticFragment(Ops op)
   {
-    operator = op;
-    text = operator.opName() + " ";
-    
+    operator = op;    
     children = new ArrayList<Fragment>();
     subLevel = false;
   }

@@ -8,8 +8,6 @@ import java.util.ArrayList;
  */
 public class JUnitFragment extends Fragment
 {
-  public ArrayList<Fragment> children;
-  public String text;
   
   public JUnitFragment(ArrayList<Fragment> kids)
   {

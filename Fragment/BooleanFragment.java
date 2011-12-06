@@ -11,8 +11,6 @@ import java.util.ArrayList;
  */
 public class BooleanFragment extends Fragment
 {
-  public ArrayList<Fragment> children;
-  public String text;
   
   public boolean complex;
   

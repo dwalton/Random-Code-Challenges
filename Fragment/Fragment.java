@@ -26,6 +26,11 @@ public abstract class Fragment
     children = new ArrayList<Fragment>();
   }
   
+  public void add(Fragment f)
+  {
+    children.add(f);
+  }
+  
   
   
   public String toString()

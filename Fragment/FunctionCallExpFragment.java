@@ -10,9 +10,8 @@ import java.util.ArrayList;
  */
 public class FunctionCallExpFragment extends Fragment
 {
-  public ArrayList<Fragment> children;
+  public boolean isExp;
   public String name;
-  boolean isExp;
   
   public FunctionCallExpFragment(String fname)
   {
